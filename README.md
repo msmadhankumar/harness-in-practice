@@ -1,6 +1,6 @@
 # Harness in Practice
 
-Companion repo for the [Harness in Practice](../../) build-log series — an AI
+Companion repo for the [Harness in Practice (https://www.linkedin.com/feed/update/urn:li:activity:7505520097013284865/)] build-log series — an AI
 harness wired into GitHub Copilot and GitHub Actions, built one post at a time.
 
 No checks run yet. This is the scaffold from Act 1: the repo the harness will
