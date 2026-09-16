@@ -1,0 +1,5 @@
+# CODEOWNERS
+# Who a harness gate escalates to when it fails.
+# Replace the placeholder below with real usernames/teams before any gate goes live.
+
+* @msmadhankumar
