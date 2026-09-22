@@ -1,6 +1,6 @@
 # Harness in Practice
 
-Companion repo for the [Harness in Practice](../../) build-log series — an AI
+Companion repo for the Harness in Practice (https://www.linkedin.com/feed/update/urn:li:activity:7505520097013284865/) build-log series — an AI
 harness wired into GitHub Copilot and GitHub Actions, built one post at a time.
 
 The first gate is live: `wire-presence-gate.yml` blocks a PR into `dev` unless
