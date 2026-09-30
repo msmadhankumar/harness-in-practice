@@ -1,0 +1,25 @@
+name: wire-presence-gate
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  check-wire-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require a WIRE spec for this branch
+        run: |
+          branch="${GITHUB_HEAD_REF}"
+          spec_file="specs/${branch}.md"
+          spec_dir="specs/${branch}"
+          if [ -f "$spec_file" ]; then
+            exit 0
+          fi
+          if [ -d "$spec_dir" ] && ls "$spec_dir"/*.md >/dev/null 2>&1; then
+            exit 0
+          fi
+          echo "::error::No WIRE spec found at $spec_file or inside $spec_dir/. Add one before this PR can merge."
+          exit 1

@@ -1,0 +1,55 @@
+name: single-file-diff-gate
+
+on:
+  pull_request:
+    branches: [dev]
+
+jobs:
+  check-diff-scope:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Diff must match files declared in the WIRE spec
+        run: |
+          branch="${GITHUB_HEAD_REF}"
+          spec_file="specs/${branch}.md"
+          spec_dir="specs/${branch}"
+
+          if [ -f "$spec_file" ]; then
+            spec_path="$spec_file"
+          elif [ -d "$spec_dir" ] && ls "$spec_dir"/*.md >/dev/null 2>&1; then
+            spec_path=$(ls "$spec_dir"/*.md | head -n 1)
+          else
+            echo "::error::No WIRE spec found at $spec_file or inside $spec_dir/. The presence gate should have already caught this."
+            exit 1
+          fi
+
+          declared_line=$(grep -m1 '^Files:' "$spec_path" || true)
+          if [ -z "$declared_line" ]; then
+            echo "::error::$spec_path has no 'Files:' line under INPUT. Declare the scope before this PR can merge."
+            exit 1
+          fi
+
+          declared_files=$(echo "$declared_line" | sed 's/^Files:[[:space:]]*//' | tr ',' '\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | sort -u)
+
+          git fetch origin "${GITHUB_BASE_REF}" --depth=1
+          changed_files=$(git diff --name-only "origin/${GITHUB_BASE_REF}"...HEAD | sort -u)
+
+          undeclared=""
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            if ! grep -qxF "$file" <<< "$declared_files"; then
+              undeclared="${undeclared}${file}, "
+            fi
+          done <<< "$changed_files"
+
+          if [ -n "$undeclared" ]; then
+            undeclared="${undeclared%, }"
+            echo "::error::diff touches ${undeclared} — not declared in the spec."
+            exit 1
+          fi
+
+          echo "Diff matches the files declared in $spec_path."
