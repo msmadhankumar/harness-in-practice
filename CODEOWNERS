@@ -1,5 +1,8 @@
 # CODEOWNERS
 # Who a harness gate escalates to when it fails.
-# Replace the placeholder below with real usernames/teams before any gate goes live.
+# Path-specific rules only — no wildcard fallback. A path not listed here has
+# no required reviewer, even with "Require review from Code Owners" enabled.
+# That gap is left visible on purpose; see post-05 for what it means in practice.
 
-* @msmadhankumar
+/.github/workflows/ @msmadhankumar
+/specs/ @msmadhankumar
